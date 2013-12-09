@@ -96,6 +96,7 @@ gtk_clock_draw (GtkWidget *clock, cairo_t *cr)
 			cy + radius * 0.75 * -cos (M_PI / 30 * time->tm_min));
 	cairo_stroke (cr);
 
+	cairo_set_line_width (cr, 0.2 * cairo_get_line_width (cr));
 	cairo_set_source_rgb (cr, 1, 0, 0);
 	cairo_move_to (cr, cx, cy);
 	cairo_line_to (cr, cx + radius * 0.75 * sin (M_PI / 30 * time->tm_sec),

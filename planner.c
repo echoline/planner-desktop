@@ -111,12 +111,12 @@ save(GtkPlanner *planner) {
 	g_free(text);
 }
 
-void
+G_MODULE_EXPORT void
 on_notes_paste_clipboard(GtkTextView *widget, gpointer planner) {
 	save(planner);
 }
 
-void
+G_MODULE_EXPORT void
 on_notes_key_release_event(GtkTextView *widget, gpointer planner) {
 	save(planner);
 }
