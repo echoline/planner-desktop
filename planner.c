@@ -76,7 +76,6 @@ on_calendar1_day_selected(GtkCalendar *widget, gpointer planner) {
 
 static void
 save(GtkPlanner *planner) {
-	GtkTextView *widget;
 	GtkTextBuffer *buffer;
 	GtkTextIter start, end;
 	gchar *text, *errstr;
@@ -96,8 +95,7 @@ save(GtkPlanner *planner) {
 	}
 	g_free(dir);
 
-	widget = GTK_TEXT_VIEW(priv->notes);
-	buffer = gtk_text_view_get_buffer(widget);
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW (priv->notes));
 	gtk_text_buffer_get_start_iter(buffer, &start);
 	gtk_text_buffer_get_end_iter(buffer, &end);
 	text = gtk_text_buffer_get_slice(buffer, &start, &end, TRUE);
@@ -112,13 +110,13 @@ save(GtkPlanner *planner) {
 }
 
 void
-on_notes_paste_clipboard(GtkTextView *widget, gpointer planner) {
-	save(planner);
+on_notes_paste_clipboard(GtkTextView *widget, gpointer arg) {
+	save(arg);
 }
 
 void
-on_notes_key_release_event(GtkTextView *widget, gpointer planner) {
-	save(planner);
+on_notes_key_release_event(GtkTextView *widget, gpointer arg) {
+	save(arg);
 }
 
 static void
