@@ -22,10 +22,10 @@ gtk_planner_class_init (GtkPlannerClass *klass)
 	g_type_class_add_private (class, sizeof (GtkPlannerPrivate));
 }
 
-gchar*
+static gchar*
 details(GtkCalendar *calendar, guint year, guint month, guint day, gpointer user_data) {
 	gchar *text;
-	gchar *path = g_strdup_printf("%s/.plans/%d/%02d/%02d/index.md", g_getenv("HOME"), year, month + 1, day);
+	gchar *path = g_strdup_printf("%s/.plans/%d/%02d/%02d/index.txt", g_getenv("HOME"), year, month + 1, day);
 
 	g_file_get_contents(path, &text, NULL, NULL);
 	g_free(path);
@@ -42,11 +42,9 @@ load(GtkPlanner *planner) {
 
 	GtkPlannerPrivate *priv = GTK_PLANNER_GET_PRIVATE (planner);
 
-	if (priv->path == NULL) {
-		return;
-	}
+	gchar *path = g_strdup_printf("%sindex.txt", priv->path);
 
-	if (g_file_get_contents(priv->path, &text, &length, NULL) == FALSE) {
+	if (g_file_get_contents(path, &text, &length, NULL) == FALSE) {
 		length = 0;
 		text = g_strdup("");
 	}
@@ -55,6 +53,7 @@ load(GtkPlanner *planner) {
 	gtk_text_buffer_set_text(buffer, text, length);
 
 	g_free(text);
+	g_free(path);
 }
 
 static void
@@ -69,7 +68,7 @@ on_calendar1_day_selected(GtkCalendar *widget, gpointer planner) {
 	if (priv->path != NULL)
 		g_free(priv->path);
 
-	priv->path = g_strdup_printf("%s/.plans/%d/%02d/%02d/index.md", g_getenv("HOME"), year, month + 1, day);
+	priv->path = g_strdup_printf("%s/.plans/%d/%02d/%02d/", g_getenv("HOME"), year, month + 1, day);
 	load(planner);
 
 }
@@ -82,40 +81,37 @@ save(GtkPlanner *planner) {
 
 	GtkPlannerPrivate *priv = GTK_PLANNER_GET_PRIVATE (planner);
 
-	gchar *dir = g_strdup(priv->path);
-	gchar *ptr = strrchr(dir, '/');
-	if (++ptr)
-		ptr = '\0';
+	gchar *path = g_strdup_printf("%sindex.txt", priv->path);
 
-	if (g_mkdir_with_parents(dir, 0700) != 0) {
-		errstr = g_strdup_printf("unable to make directory %s", dir);
-		error(errstr);
+	if (g_mkdir_with_parents(priv->path, 0700) != 0) {
+		errstr = g_strdup_printf("unable to make directory %s", priv->path);
+		perror(errstr);
 		g_free(errstr);
 
 	}
-	g_free(dir);
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW (priv->notes));
 	gtk_text_buffer_get_start_iter(buffer, &start);
 	gtk_text_buffer_get_end_iter(buffer, &end);
 	text = gtk_text_buffer_get_slice(buffer, &start, &end, TRUE);
 
-	if (g_file_set_contents(priv->path, text, -1, NULL) == FALSE) {
-		errstr = g_strdup_printf("unable to save to %s", priv->path);
-		error(errstr);
+	if (g_file_set_contents(path, text, -1, NULL) == FALSE) {
+		errstr = g_strdup_printf("unable to save to %s", path);
+		perror(errstr);
 		g_free(errstr);
 	}
 
 	g_free(text);
+	g_free(path);
 }
 
-void
+static void
 on_notes_paste_clipboard(GtkTextView *widget, gpointer arg) {
 	save(arg);
 }
 
-void
-on_notes_key_release_event(GtkTextView *widget, gpointer arg) {
+static void
+on_notes_key_release_event(GtkTextView *widget, GdkEvent *event, gpointer arg) {
 	save(arg);
 }
 
@@ -134,10 +130,10 @@ gtk_planner_init (GtkPlanner *planner)
 	gtk_grid_attach(GTK_GRID(planner), priv->calendar, 0, 0, 1, 1);
 
 	buffer = gtk_text_buffer_new(gtk_text_tag_table_new ());
-	priv->notes = gtk_text_view_new_with_buffer(buffer);
-	gtk_widget_set_size_request(priv->notes, 400, -1);
-	g_signal_connect(priv->notes, "paste-clipboard", (GCallback)on_notes_paste_clipboard, planner);
+	priv->notes = gtk_text_view_new_with_buffer (buffer);
+	gtk_widget_set_size_request(priv->notes, 500, -1);
 	g_signal_connect(priv->notes, "key-release-event", (GCallback)on_notes_key_release_event, planner);
+	g_signal_connect(priv->notes, "paste-clipboard", (GCallback)on_notes_paste_clipboard, planner);
 
 	gtk_grid_attach(GTK_GRID(planner), priv->notes, 1, 0, 1, 1);
 

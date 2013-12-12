@@ -50,7 +50,7 @@ gtk_clock_draw (GtkWidget *clock, cairo_t *cr)
 	gint i;
 	GtkClockPrivate *priv = GTK_CLOCK_GET_PRIVATE (clock);
 	struct tm *time = &priv->time;
-	cairo_pattern_t *pat;
+//	cairo_pattern_t *pat;
 
 	cairo_arc (cr, cx, cy, radius, 0, 2 * M_PI);
 	cairo_set_source_rgb (cr, 1, 1, 1);
@@ -105,13 +105,13 @@ gtk_clock_draw (GtkWidget *clock, cairo_t *cr)
 
 	cairo_arc (cr, cx, cy, radius, 0.0, 2.0 * M_PI);
 
-	pat = cairo_pattern_create_radial (cx, cy, radius,
+/*	pat = cairo_pattern_create_radial (cx, cy, radius,
                                    0,  0, radius);
 	cairo_pattern_add_color_stop_rgba (pat, 0, 0, 0, 0, 0.4);
 	cairo_pattern_add_color_stop_rgba (pat, 1, 1, 1, 1, 0.2);
 	cairo_set_source (cr, pat);
 	cairo_fill (cr);
-	cairo_pattern_destroy (pat);
+	cairo_pattern_destroy (pat); */
 
 	return TRUE;
 }
