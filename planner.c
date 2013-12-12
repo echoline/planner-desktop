@@ -121,7 +121,10 @@ gtk_planner_init (GtkPlanner *planner)
 	GtkWidget *scrolled;
 	GtkWidget *frame;
 	GtkTextBuffer *buffer;
+
 	GtkPlannerPrivate *priv = GTK_PLANNER_GET_PRIVATE (planner);
+
+	gtk_grid_set_column_spacing (GTK_GRID (planner), 4);
 
 	priv->calendar = gtk_calendar_new ();
 	gtk_calendar_set_detail_func(GTK_CALENDAR(priv->calendar), &details, NULL, NULL);
