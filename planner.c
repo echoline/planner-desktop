@@ -119,6 +119,7 @@ static void
 gtk_planner_init (GtkPlanner *planner)
 {
 	GtkWidget *scrolled;
+	GtkWidget *frame;
 	GtkTextBuffer *buffer;
 	GtkPlannerPrivate *priv = GTK_PLANNER_GET_PRIVATE (planner);
 
@@ -132,16 +133,18 @@ gtk_planner_init (GtkPlanner *planner)
 
 	buffer = gtk_text_buffer_new(gtk_text_tag_table_new ());
 	priv->notes = gtk_text_view_new_with_buffer (buffer);
-	gtk_widget_set_size_request(priv->notes, 480, -1);
 	g_signal_connect(priv->notes, "key-release-event", (GCallback)on_notes_key_release_event, planner);
 	g_signal_connect(priv->notes, "paste-clipboard", (GCallback)on_notes_paste_clipboard, planner);
 
 	scrolled = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_set_size_request (scrolled, 480, -1);
-	gtk_container_set_border_width (GTK_CONTAINER (scrolled), 4);
+	frame = gtk_frame_new (NULL);
+	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
+	gtk_container_add (GTK_CONTAINER (frame), scrolled);
+
+	gtk_widget_set_size_request (scrolled, 420, -1);
 	gtk_container_add (GTK_CONTAINER (scrolled), priv->notes);
 
-	gtk_grid_attach(GTK_GRID(planner), scrolled, 1, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(planner), frame, 1, 0, 1, 1);
 
 	on_calendar1_day_selected(GTK_CALENDAR(priv->calendar), planner);
 
