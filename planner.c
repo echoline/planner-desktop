@@ -118,6 +118,7 @@ on_notes_key_release_event(GtkTextView *widget, GdkEvent *event, gpointer arg) {
 static void
 gtk_planner_init (GtkPlanner *planner)
 {
+	GtkWidget *scrolled;
 	GtkTextBuffer *buffer;
 	GtkPlannerPrivate *priv = GTK_PLANNER_GET_PRIVATE (planner);
 
@@ -135,7 +136,11 @@ gtk_planner_init (GtkPlanner *planner)
 	g_signal_connect(priv->notes, "key-release-event", (GCallback)on_notes_key_release_event, planner);
 	g_signal_connect(priv->notes, "paste-clipboard", (GCallback)on_notes_paste_clipboard, planner);
 
-	gtk_grid_attach(GTK_GRID(planner), priv->notes, 1, 0, 1, 1);
+	scrolled = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_set_size_request (scrolled, 500, -1);
+	gtk_container_add (GTK_CONTAINER (scrolled), priv->notes);
+
+	gtk_grid_attach(GTK_GRID(planner), scrolled, 1, 0, 1, 1);
 
 	on_calendar1_day_selected(GTK_CALENDAR(priv->calendar), planner);
 
