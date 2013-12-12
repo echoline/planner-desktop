@@ -55,12 +55,11 @@ main (int argc, char **argv)
 
 	bubble = gtk_bubble_new ();
 	appfinder = gtk_appfinder_new ();
-	gtk_widget_set_size_request (appfinder, 800, -1);
+	gtk_widget_set_size_request (bubble, 800, 150);
 	gtk_widget_set_margin_left (appfinder, 50);
-	gtk_widget_set_margin_top (appfinder, 25);
-	gtk_widget_set_margin_bottom (appfinder, 25);
+	gtk_widget_set_margin_top (appfinder, 50);
 	gtk_container_add (GTK_CONTAINER (bubble), appfinder);
-	gtk_fixed_put (GTK_FIXED (fixed), bubble, 25, height - 150);
+	gtk_fixed_put (GTK_FIXED (fixed), bubble, 25, height - 175);
 
 
 	g_signal_connect (root, "destroy",
