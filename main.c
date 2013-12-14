@@ -1,7 +1,6 @@
 #include <gtk/gtk.h>
 #include "clock.h"
 #include "tray.h"
-#include "background.h"
 #include "bubble.h"
 #include "appfinder.h"
 #include "planner.h"
@@ -27,7 +26,7 @@ main (int argc, char **argv)
 	root = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_resizable (GTK_WINDOW (root), FALSE);
 
-	fixed = gtk_background_new ();
+	fixed = gtk_fixed_new ();
 	gtk_container_add (GTK_CONTAINER (root), fixed);
 	
 	clock = gtk_clock_new ();
