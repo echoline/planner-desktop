@@ -148,9 +148,6 @@ gtk_planner_init (GtkPlanner *planner)
 	gtk_container_add (GTK_CONTAINER (scrolled), priv->notes);
 
 	gtk_grid_attach(GTK_GRID(planner), frame, 1, 0, 1, 1);
-
-	on_calendar1_day_selected(GTK_CALENDAR(priv->calendar), planner);
-
 }
 
 GtkWidget*
