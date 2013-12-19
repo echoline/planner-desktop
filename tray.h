@@ -10,14 +10,14 @@ typedef struct _GtkTrayClass	GtkTrayClass;
 
 struct _GtkTray
 {
-	GtkBox parent;
+	GtkGrid parent;
 
 	/* private */
 };
 
 struct _GtkTrayClass
 {
-	GtkBoxClass parent_class;
+	GtkGridClass parent_class;
 };
 
 #define GTK_TYPE_TRAY		(gtk_tray_get_type ())

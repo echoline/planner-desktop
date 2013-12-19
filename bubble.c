@@ -52,24 +52,13 @@ gtk_bubble_draw (GtkWidget *bubble, cairo_t *cr)
 static void
 gtk_bubble_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
 {
-	GtkWidget *child = gtk_bin_get_child (GTK_BIN (widget));
-	GtkAllocation child_allocation;
+	allocation->x -= 25;
+	allocation->y += 25;
+		
+	allocation->width += 50.0;
+	allocation->height += 50.0;
 
 	gtk_widget_set_allocation (widget, allocation);
-
-	if (child && gtk_widget_get_visible (child))
-	{
-		child_allocation.x = allocation->x + MIN (25.0,
-					allocation->width / 2.0);
-		child_allocation.y = allocation->y + MIN (25.0,
-					allocation->height / 2.0);
-		child_allocation.width = allocation->width - MIN (50.0,
-					allocation->width);
-		child_allocation.height = allocation->height - MIN (50.0,
-					allocation->height);
-
-		gtk_widget_size_allocate (child, &child_allocation);
-	}
 
 	GTK_WIDGET_CLASS (gtk_bubble_parent_class)->size_allocate (widget,
 				allocation);

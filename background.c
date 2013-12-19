@@ -23,7 +23,7 @@ gtk_background_draw (GtkWidget *background, cairo_t *cr)
 	GtkBackgroundPrivate *priv = GTK_BACKGROUND_GET_PRIVATE (background);
 
 	gdk_cairo_set_source_pixbuf (cr, priv->pixbuf, 0, 0);
-	cairo_rectangle (cr, 0, 0, width, height); // TODO
+	cairo_rectangle (cr, 0, 0, width, height); 
 	cairo_fill (cr);
 
 	GTK_WIDGET_CLASS (gtk_background_parent_class)->draw(background, cr);
@@ -47,39 +47,70 @@ gtk_background_init (GtkBackground *background)
 	GtkBackgroundPrivate *priv = GTK_BACKGROUND_GET_PRIVATE (background);
 }
 
-GtkWidget*
-gtk_background_new (void)
+
+static GdkPixbuf*
+load_background (gchar *image_name)
 {
-	GtkWidget *ret = g_object_new (GTK_TYPE_BACKGROUND, NULL);
-	gchar *conf;
-	gchar *image_name;
 	GdkPixbufLoader *loader;
 	gchar *data;
 	gint length;
+	gint swidth = gdk_screen_width ();
+	gint sheight = gdk_screen_height ();
+	gint width;
+	gint height;
+	GdkPixbuf *pixbuf = NULL;
+	GError *error = NULL;
+
+	if (g_file_get_contents (image_name, &data, &length, NULL))
+	{
+		loader = gdk_pixbuf_loader_new ();
+		gdk_pixbuf_loader_write (loader, data, length, &error);
+		pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
+
+		if (pixbuf != NULL) {
+			width = gdk_pixbuf_get_width (pixbuf);
+			height = gdk_pixbuf_get_height (pixbuf);
+
+			sheight = height * (swidth / width);
+			gdk_pixbuf_scale_simple (pixbuf, sheight, swidth,
+					GDK_INTERP_BILINEAR);
+		}
+	}
+
+	return pixbuf;
+}
+
+GtkWidget*
+gtk_background_new (gchar *filename)
+{
+	GtkWidget *ret = g_object_new (GTK_TYPE_BACKGROUND, NULL);
+	GtkBackgroundPrivate *priv = GTK_BACKGROUND_GET_PRIVATE (ret);
+	gchar *conf;
+	gchar *image_name;
+
+	priv->pixbuf = NULL;
 
 	conf = g_strconcat (g_get_user_config_dir (), "/planner-desktop/background.conf", NULL);
 
-	if (g_file_get_contents (conf, &image_name, NULL, NULL))
+	if (filename != NULL)
+	{
+		priv->pixbuf = load_background (filename);
+	}
+	else if (g_file_get_contents (conf, &image_name, NULL, NULL))
 	{
 		image_name[strcspn(image_name, "\r\n")] = '\0';
 
-		if (g_file_get_contents (image_name, &data, &length, NULL))
-		{
-			loader = gdk_pixbuf_loader_new ();
-			gdk_pixbuf_loader_write (loader, data, length, NULL);
-			GTK_BACKGROUND_GET_PRIVATE(ret)->pixbuf =
-				gdk_pixbuf_loader_get_pixbuf (loader);
-		}
-
+		priv->pixbuf = load_background (image_name);
+	
 		g_free (image_name);
-
-		goto cleanup;
 	}
 
-	GTK_BACKGROUND_GET_PRIVATE(ret)->pixbuf =
-		gdk_pixbuf_new_from_xpm_data (background_xpm);
+	if (priv->pixbuf == NULL)
+	{
+		GTK_BACKGROUND_GET_PRIVATE(ret)->pixbuf =
+			gdk_pixbuf_new_from_xpm_data (background_xpm);
+	}
 
-cleanup:
 	g_free(conf);
 
 	gtk_widget_set_has_window (ret, FALSE);

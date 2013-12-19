@@ -12,16 +12,17 @@ struct _GtkTrayPrivate
 	Atom selection_atom;
 	Atom opcode_atom;
 	Atom orientation_atom;
+	gint rows;
 };
 
 #define GTK_TRAY_GET_PRIVATE(obj)	(G_TYPE_INSTANCE_GET_PRIVATE ((obj), GTK_TYPE_TRAY, GtkTrayPrivate))
 
-G_DEFINE_TYPE (GtkTray, gtk_tray, GTK_TYPE_BOX);
+G_DEFINE_TYPE (GtkTray, gtk_tray, GTK_TYPE_GRID);
 
 static GdkFilterReturn
 gtk_tray_handle_xevent (GdkXEvent *xevent, GdkEvent *event, gpointer user_data)
 {
-	GtkTray *tray = GTK_TRAY (user_data);
+	GtkWidget *tray = GTK_WIDGET (user_data);
 	GtkTrayPrivate *priv = GTK_TRAY_GET_PRIVATE (tray);
 	XClientMessageEvent *xev;
 	GtkWidget *socket;
@@ -32,10 +33,10 @@ gtk_tray_handle_xevent (GdkXEvent *xevent, GdkEvent *event, gpointer user_data)
 	case ClientMessage:
 		xev = (XClientMessageEvent*)xevent;
 
-		printf ("%ld:%s %ld:%s\n", xev->message_type,
+/*		printf ("%ld:%s %ld:%s\n", xev->message_type,
 			gdk_x11_get_xatom_name(xev->message_type),
 			xev->data.l[1],
-			gdk_x11_get_xatom_name(xev->data.l[1]));
+			gdk_x11_get_xatom_name(xev->data.l[1]));*/
 
 		if (xev->message_type == priv->manager_atom &&
 		    xev->data.l[1] == priv->selection_atom)
@@ -48,15 +49,17 @@ gtk_tray_handle_xevent (GdkXEvent *xevent, GdkEvent *event, gpointer user_data)
 			window = xev->data.l[2];
 
 			socket = gtk_socket_new ();
-//			gtk_widget_set_has_window (GTK_WIDGET (socket), FALSE);
+			gtk_widget_set_size_request (socket, 64, 64);
 			gtk_widget_override_background_color (GTK_WIDGET (
 						socket), GTK_STATE_FLAG_NORMAL,
 						&bgcolor);
-			gtk_container_add (GTK_CONTAINER (tray), socket);
-			gtk_widget_set_size_request (socket, 25, 25);
-			gtk_widget_show_all (socket);
+			gtk_grid_attach (GTK_GRID (tray), socket, 0, priv->rows, 1, 1);
+			priv->rows++;
 
 			gtk_socket_add_id (GTK_SOCKET (socket), window);
+			gtk_widget_set_size_request (tray, 64, -1);
+
+			gtk_widget_show_all (socket);
 
 			return GDK_FILTER_REMOVE;
 		}
@@ -118,6 +121,7 @@ gtk_tray_realize (GtkWidget *widget)
 
 		gdk_window_add_filter (window, gtk_tray_handle_xevent, tray);
 	}
+
 }
 
 static gboolean
@@ -142,7 +146,6 @@ gtk_tray_class_init (GtkTrayClass *klass)
 static void
 gtk_tray_init (GtkTray *tray)
 {
-	gtk_widget_set_has_window (GTK_WIDGET (tray), FALSE);
 }
 
 GtkWidget*
@@ -150,8 +153,8 @@ gtk_tray_new (void)
 {
 	GtkWidget *ret = g_object_new (GTK_TYPE_TRAY, NULL);
 
-	gtk_orientable_set_orientation (GTK_ORIENTABLE (ret),
-					GTK_ORIENTATION_VERTICAL);
+	GtkTrayPrivate *priv = GTK_TRAY_GET_PRIVATE (ret);
+	priv->rows = 0;
 
 	return ret;
 }
