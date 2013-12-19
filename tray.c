@@ -19,50 +19,80 @@ struct _GtkTrayPrivate
 
 G_DEFINE_TYPE (GtkTray, gtk_tray, GTK_TYPE_GRID);
 
+void
+remove_empty_frames (GtkWidget *frame, gpointer arg)
+{
+	GtkWidget *tray = GTK_WIDGET (arg);
+	GList *children = gtk_container_get_children(GTK_CONTAINER (frame));
+
+	if (g_list_length (children) == 0) {
+		gtk_container_remove (GTK_CONTAINER (tray), frame);
+	}
+}
+
 static GdkFilterReturn
 gtk_tray_handle_xevent (GdkXEvent *xevent, GdkEvent *event, gpointer user_data)
 {
 	GtkWidget *tray = GTK_WIDGET (user_data);
 	GtkTrayPrivate *priv = GTK_TRAY_GET_PRIVATE (tray);
-	XClientMessageEvent *xev;
+	XClientMessageEvent *xcmev;
+	XDestroyWindowEvent *xdwev;
 	GtkWidget *socket;
 	Window window;
 	GdkRGBA bgcolor = { 1, 1, 1, 1 };
+	GtkWidget *frame;
 
 	switch (((XEvent*)xevent)->type) {
 	case ClientMessage:
-		xev = (XClientMessageEvent*)xevent;
+		xcmev = (XClientMessageEvent*)xevent;
 
-/*		printf ("%ld:%s %ld:%s\n", xev->message_type,
-			gdk_x11_get_xatom_name(xev->message_type),
-			xev->data.l[1],
-			gdk_x11_get_xatom_name(xev->data.l[1]));*/
+		/*printf ("%ld:%s %ld:%s\n", xcmev->message_type,
+			gdk_x11_get_xatom_name(xcmev->message_type),
+			xcmev->data.l[1],
+			gdk_x11_get_xatom_name(xcmev->data.l[1])); */
 
-		if (xev->message_type == priv->manager_atom &&
-		    xev->data.l[1] == priv->selection_atom)
+		if (xcmev->message_type == priv->manager_atom &&
+		    xcmev->data.l[1] == priv->selection_atom)
 		{
 			return GDK_FILTER_REMOVE;
 		}
-		else if (xev->message_type == priv->opcode_atom &&
-		    xev->data.l[1] == SYSTEM_TRAY_REQUEST_DOCK)
+		else if (xcmev->message_type == priv->opcode_atom &&
+		    xcmev->data.l[1] == SYSTEM_TRAY_REQUEST_DOCK)
 		{
-			window = xev->data.l[2];
+			window = xcmev->data.l[2];
+
+			frame = gtk_frame_new(NULL);
+			gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_ETCHED_OUT);
+			gtk_widget_set_size_request (frame, 64, 64);
+
 
 			socket = gtk_socket_new ();
 			gtk_widget_set_size_request (socket, 64, 64);
 			gtk_widget_override_background_color (GTK_WIDGET (
 						socket), GTK_STATE_FLAG_NORMAL,
 						&bgcolor);
-			gtk_grid_attach (GTK_GRID (tray), socket, 0, priv->rows, 1, 1);
+
+			gtk_container_add (GTK_CONTAINER (frame), socket);
+
+			gtk_grid_attach (GTK_GRID (tray), frame, 0, priv->rows, 1, 1);
 			priv->rows++;
 
 			gtk_socket_add_id (GTK_SOCKET (socket), window);
 			gtk_widget_set_size_request (tray, 64, -1);
 
-			gtk_widget_show_all (socket);
+			gtk_widget_show_all (frame);
 
 			return GDK_FILTER_REMOVE;
 		}
+		break;
+	case UnmapNotify:
+	case DestroyNotify:
+		gtk_container_foreach (GTK_CONTAINER (tray),
+				(GtkCallback)remove_empty_frames,
+				tray);
+
+		return GDK_FILTER_REMOVE;
+
 		break;
 	default:
 		break;
@@ -97,8 +127,6 @@ gtk_tray_realize (GtkWidget *widget)
 	if (GTK_WIDGET_CLASS (gtk_tray_parent_class)->realize)
 		GTK_WIDGET_CLASS (gtk_tray_parent_class)->realize (widget);
 
-	gtk_widget_add_events (widget, GDK_PROPERTY_CHANGE_MASK |
-					GDK_STRUCTURE_MASK);
 	window = gtk_widget_get_window (widget);
 
 	XSetSelectionOwner (display, priv->selection_atom,
@@ -122,6 +150,7 @@ gtk_tray_realize (GtkWidget *widget)
 		gdk_window_add_filter (window, gtk_tray_handle_xevent, tray);
 	}
 
+	gdk_window_set_events (window, GDK_ALL_EVENTS_MASK);
 }
 
 static gboolean

@@ -20,7 +20,7 @@ gtk_bubble_draw (GtkWidget *bubble, cairo_t *cr)
 
 	cairo_close_path (cr);
 
-	cairo_set_source_rgb (cr, 1, 1, 1);
+	cairo_set_source_rgba (cr, 1, 1, 1, 0.75);
 	cairo_fill_preserve (cr);
 	cairo_set_source_rgb (cr, 0, 0, 0);
 	cairo_stroke (cr);
