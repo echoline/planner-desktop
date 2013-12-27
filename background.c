@@ -54,27 +54,17 @@ load_background (gchar *image_name)
 	GdkPixbufLoader *loader;
 	gchar *data;
 	gint length;
-	gint swidth = gdk_screen_width ();
-	gint sheight = gdk_screen_height ();
-	gint width;
-	gint height;
+	gint width = gdk_screen_width ();
+	gint height = gdk_screen_height ();
 	GdkPixbuf *pixbuf = NULL;
 	GError *error = NULL;
 
 	if (g_file_get_contents (image_name, &data, &length, NULL))
 	{
 		loader = gdk_pixbuf_loader_new ();
+		gdk_pixbuf_loader_set_size (loader, width, height);
 		gdk_pixbuf_loader_write (loader, data, length, &error);
 		pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
-
-		if (pixbuf != NULL) {
-			width = gdk_pixbuf_get_width (pixbuf);
-			height = gdk_pixbuf_get_height (pixbuf);
-
-			sheight = height * (swidth / width);
-			gdk_pixbuf_scale_simple (pixbuf, sheight, swidth,
-					GDK_INTERP_BILINEAR);
-		}
 	}
 
 	return pixbuf;
