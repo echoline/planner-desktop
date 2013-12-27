@@ -17,8 +17,8 @@ static GOptionEntry entries[] =
 	{ "background", 'b', 0, G_OPTION_ARG_STRING, &background_name, "Background image name", NULL },
 	{ "tray", 't', 0, G_OPTION_ARG_NONE, &tray, "System tray for icons", NULL},
 	{ "launcher",'l', 0, G_OPTION_ARG_NONE, &launcher, "System launcher input box", NULL},
-	{ "no-planner",'p', 0, G_OPTION_ARG_NONE, &noplanner, "System tray for icons", NULL},
-	{ "no-clock",'c', 0, G_OPTION_ARG_NONE, &noclock, "System launcher input box", NULL},
+	{ "no-planner",'p', 0, G_OPTION_ARG_NONE, &noplanner, "Do not display planner", NULL},
+	{ "no-clock",'c', 0, G_OPTION_ARG_NONE, &noclock, "Do not display clock", NULL},
 	{ NULL }
 };
 
