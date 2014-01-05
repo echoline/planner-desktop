@@ -44,7 +44,8 @@ activate_cb (GtkEntry *entry, gpointer arg)
 				&error))
 		{
 			dialog = gtk_dialog_new ();
-			contents = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+			contents = gtk_dialog_get_content_area (
+				       			GTK_DIALOG(dialog));
 			label = gtk_label_new (error->message);
 			gtk_container_add (GTK_CONTAINER (contents), label);
 		}

@@ -1,5 +1,14 @@
 #include "bubble.h"
 
+typedef struct _GtkBubblePrivate GtkBubblePrivate;
+
+struct _GtkBubblePrivate
+{
+	unsigned char closed;
+};
+
+#define GTK_BUBBLE_GET_PRIVATE(obj)	(G_TYPE_INSTANCE_GET_PRIVATE ((obj), GTK_TYPE_BUBBLE, GtkBubblePrivate))
+
 G_DEFINE_TYPE (GtkBubble, gtk_bubble, GTK_TYPE_BIN);
 
 
@@ -68,6 +77,8 @@ static void
 gtk_bubble_class_init (GtkBubbleClass *klass)
 {
 	GtkWidgetClass *class = GTK_WIDGET_CLASS (klass);
+
+	g_type_class_add_private (class, sizeof (GtkBubblePrivate));
 
 	class->draw = gtk_bubble_draw;
 	class->size_allocate = gtk_bubble_size_allocate;

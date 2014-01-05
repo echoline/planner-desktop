@@ -77,6 +77,7 @@ gtk_background_new (gchar *filename)
 	GtkBackgroundPrivate *priv = GTK_BACKGROUND_GET_PRIVATE (ret);
 	gchar *conf;
 	gchar *image_name;
+	gint width, height;
 
 	priv->pixbuf = NULL;
 
@@ -97,8 +98,14 @@ gtk_background_new (gchar *filename)
 
 	if (priv->pixbuf == NULL)
 	{
-		GTK_BACKGROUND_GET_PRIVATE(ret)->pixbuf =
-			gdk_pixbuf_new_from_xpm_data (background_xpm);
+		width = gdk_screen_width ();
+		height = gdk_screen_height ();
+
+		priv->pixbuf = gdk_pixbuf_new_from_xpm_data (background_xpm);
+	
+		priv->pixbuf = gdk_pixbuf_scale_simple (priv->pixbuf,
+							width, height,
+							GDK_INTERP_BILINEAR);
 	}
 
 	g_free(conf);

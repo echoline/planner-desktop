@@ -70,7 +70,6 @@ on_calendar1_day_selected(GtkCalendar *widget, gpointer planner) {
 
 	priv->path = g_strdup_printf("%s/.plans/%d/%02d/%02d/", g_getenv("HOME"), year, month + 1, day);
 	load(planner);
-
 }
 
 static void
