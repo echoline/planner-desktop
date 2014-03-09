@@ -10,15 +10,15 @@ static gchar *background_name = NULL;
 static gboolean tray = FALSE;
 static gboolean launcher = FALSE;
 static gboolean noplanner = FALSE;
-static gboolean noclock = FALSE;
+static gboolean showclock = FALSE;
 
 static GOptionEntry entries[] =
 {
 	{ "background", 'b', 0, G_OPTION_ARG_STRING, &background_name, "Background image name", NULL },
 	{ "tray", 't', 0, G_OPTION_ARG_NONE, &tray, "System tray for icons", NULL},
 	{ "launcher",'l', 0, G_OPTION_ARG_NONE, &launcher, "System launcher input box", NULL},
-	{ "no-planner",'p', 0, G_OPTION_ARG_NONE, &noplanner, "Do not display planner", NULL},
-	{ "no-clock",'c', 0, G_OPTION_ARG_NONE, &noclock, "Do not display clock", NULL},
+	{ "no-planner",'n', 0, G_OPTION_ARG_NONE, &noplanner, "Do not display planner", NULL},
+	{ "clock",'c', 0, G_OPTION_ARG_NONE, &showclock, "Display clock", NULL},
 	{ NULL }
 };
 
@@ -27,7 +27,7 @@ main (int argc, char **argv)
 {
 	GtkWidget *bubble;
 	GtkWidget *appfinder;
-	GtkWidget *clock;
+	GtkWidget *bubbleclock;
 	GtkWidget *systray;
 	GtkWidget *planner;
 	GtkWidget *fixed;
@@ -51,10 +51,10 @@ main (int argc, char **argv)
 	fixed = gtk_background_new (background_name);
 	gtk_container_add (GTK_CONTAINER (root), fixed);
 	
-	if (!noclock) {
-		clock = gtk_clock_new ();
-		gtk_widget_set_size_request (clock, 150, 150);
-		gtk_fixed_put (GTK_FIXED (fixed), clock, width - 175, height - 175);
+	if (showclock) {
+		bubbleclock = gtk_clock_new ();
+		gtk_widget_set_size_request (bubbleclock, 150, 150);
+		gtk_fixed_put (GTK_FIXED (fixed), bubbleclock, width - 175, height - 175);
 	}
 
 	if (tray) {

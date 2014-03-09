@@ -73,6 +73,20 @@ on_calendar1_day_selected(GtkCalendar *widget, gpointer planner) {
 }
 
 static void
+on_today_clicked(GtkButton *widget, gpointer planner) {
+	GtkPlannerPrivate *priv = GTK_PLANNER_GET_PRIVATE (planner);
+	GDate date;
+
+	g_date_set_time_t (&date, time(NULL));
+	gtk_calendar_select_month(GTK_CALENDAR(priv->calendar),
+				g_date_get_month(&date)-1,
+				g_date_get_year(&date));
+	gtk_calendar_select_day(GTK_CALENDAR(priv->calendar),
+				g_date_get_day(&date));
+	on_calendar1_day_selected(GTK_CALENDAR(priv->calendar), planner);
+}
+
+static void
 save(GtkPlanner *planner) {
 	GtkTextBuffer *buffer;
 	GtkTextIter start, end;
@@ -119,11 +133,16 @@ gtk_planner_init (GtkPlanner *planner)
 {
 	GtkWidget *scrolled;
 	GtkWidget *frame;
+	GtkWidget *button;
 	GtkTextBuffer *buffer;
 
 	GtkPlannerPrivate *priv = GTK_PLANNER_GET_PRIVATE (planner);
 
 	gtk_grid_set_column_spacing (GTK_GRID (planner), 4);
+
+	button = gtk_button_new_with_label ("Today");
+	g_signal_connect(button, "clicked", (GCallback)on_today_clicked, planner);
+	gtk_grid_attach(GTK_GRID(planner), button, 2, 0, 1, 1);
 
 	priv->calendar = gtk_calendar_new ();
 	gtk_calendar_set_detail_func(GTK_CALENDAR(priv->calendar), &details, NULL, NULL);
@@ -131,7 +150,7 @@ gtk_planner_init (GtkPlanner *planner)
 	gtk_calendar_set_detail_height_rows(GTK_CALENDAR(priv->calendar), 1);
 	g_signal_connect(priv->calendar, "day-selected", (GCallback)on_calendar1_day_selected, planner);
 
-	gtk_grid_attach(GTK_GRID(planner), priv->calendar, 0, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(planner), priv->calendar, 0, 0, 1, 7);
 
 	buffer = gtk_text_buffer_new(gtk_text_tag_table_new ());
 	priv->notes = gtk_text_view_new_with_buffer (buffer);
@@ -146,7 +165,7 @@ gtk_planner_init (GtkPlanner *planner)
 	gtk_widget_set_size_request (scrolled, 420, -1);
 	gtk_container_add (GTK_CONTAINER (scrolled), priv->notes);
 
-	gtk_grid_attach(GTK_GRID(planner), frame, 1, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(planner), frame, 1, 0, 1, 7);
 
 	on_calendar1_day_selected(GTK_CALENDAR(priv->calendar), planner);
 }
