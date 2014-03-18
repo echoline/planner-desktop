@@ -64,6 +64,8 @@ on_calendar1_day_selected(GtkCalendar *widget, gpointer planner) {
 	GtkPlannerPrivate *priv = GTK_PLANNER_GET_PRIVATE (planner);
 
 	gtk_calendar_get_date(widget, &year, &month, &day);
+	gtk_calendar_clear_marks(GTK_CALENDAR(priv->calendar));
+	gtk_calendar_mark_day(GTK_CALENDAR(priv->calendar), day);
 
 	if (priv->path != NULL)
 		g_free(priv->path);
@@ -82,6 +84,8 @@ on_today_clicked(GtkButton *widget, gpointer planner) {
 				g_date_get_month(&date)-1,
 				g_date_get_year(&date));
 	gtk_calendar_select_day(GTK_CALENDAR(priv->calendar),
+				g_date_get_day(&date));
+	gtk_calendar_mark_day(GTK_CALENDAR(priv->calendar),
 				g_date_get_day(&date));
 	on_calendar1_day_selected(GTK_CALENDAR(priv->calendar), planner);
 }
@@ -147,10 +151,11 @@ gtk_planner_init (GtkPlanner *planner)
 	priv->calendar = gtk_calendar_new ();
 	gtk_calendar_set_detail_func(GTK_CALENDAR(priv->calendar), &details, NULL, NULL);
 	gtk_calendar_set_detail_width_chars(GTK_CALENDAR(priv->calendar), 3);
-	gtk_calendar_set_detail_height_rows(GTK_CALENDAR(priv->calendar), 1);
+	gtk_calendar_set_detail_height_rows(GTK_CALENDAR(priv->calendar), 3);
 	g_signal_connect(priv->calendar, "day-selected", (GCallback)on_calendar1_day_selected, planner);
+	gtk_widget_set_size_request(priv->calendar, 500, 420);
 
-	gtk_grid_attach(GTK_GRID(planner), priv->calendar, 0, 0, 1, 7);
+	gtk_grid_attach(GTK_GRID(planner), priv->calendar, 0, 0, 1, 10);
 
 	buffer = gtk_text_buffer_new(gtk_text_tag_table_new ());
 	priv->notes = gtk_text_view_new_with_buffer (buffer);
@@ -162,10 +167,10 @@ gtk_planner_init (GtkPlanner *planner)
 	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
 	gtk_container_add (GTK_CONTAINER (frame), scrolled);
 
-	gtk_widget_set_size_request (scrolled, 420, -1);
+	gtk_widget_set_size_request (scrolled, 240, -1);
 	gtk_container_add (GTK_CONTAINER (scrolled), priv->notes);
 
-	gtk_grid_attach(GTK_GRID(planner), frame, 1, 0, 1, 7);
+	gtk_grid_attach(GTK_GRID(planner), frame, 1, 0, 1, 10);
 
 	on_calendar1_day_selected(GTK_CALENDAR(priv->calendar), planner);
 }
