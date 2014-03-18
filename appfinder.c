@@ -62,9 +62,9 @@ gtk_appfinder_init (GtkAppfinder *appfinder)
 	GtkAppfinderPrivate *priv = GTK_APPFINDER_GET_PRIVATE (appfinder);
 
 	priv->entry = gtk_entry_new ();
-	gtk_entry_set_icon_from_stock (GTK_ENTRY (priv->entry),
+	gtk_entry_set_icon_from_icon_name (GTK_ENTRY (priv->entry),
 					GTK_ENTRY_ICON_SECONDARY,
-					GTK_STOCK_OK);
+					"gtk-ok");
 	gtk_widget_set_size_request (priv->entry, 640, -1);
 	g_signal_connect (priv->entry, "activate", G_CALLBACK (activate_cb), NULL);
 
