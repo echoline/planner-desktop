@@ -52,11 +52,13 @@ gtk_clock_draw (GtkWidget *clock, cairo_t *cr)
 	struct tm *time = &priv->time;
 //	cairo_pattern_t *pat;
 
+/*
 	cairo_arc (cr, cx, cy, radius, 0, 2 * M_PI);
 	cairo_set_source_rgba (cr, 1, 1, 1, 0.5);
 	cairo_fill_preserve (cr);
 	cairo_set_source_rgb (cr, 0, 0, 0);
 	cairo_stroke (cr);
+*/
 
 	for (i = 0; i < 12; i++)
 	{

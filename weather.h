@@ -9,14 +9,14 @@ typedef struct _GtkWeatherClass		GtkWeatherClass;
 
 struct _GtkWeather
 {
-	GtkBox parent;
+	GtkGrid parent;
 
 	/* private */
 };
 
 struct _GtkWeatherClass
 {
-	GtkBoxClass parent_class;
+	GtkGridClass parent_class;
 };
 
 #define GTK_TYPE_WEATHER		(gtk_weather_get_type ())

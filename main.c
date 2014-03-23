@@ -6,7 +6,7 @@
 #include "background.h"
 #include "planner.h"
 #include "info.h"
-#include "weather/weather-widget.h"
+#include "weather.h"
 
 static gchar *background_name = NULL;
 static gboolean tray = FALSE;
@@ -53,59 +53,58 @@ main (int argc, char **argv)
 
 	fixed = gtk_background_new (background_name);
 	gtk_container_add (GTK_CONTAINER (root), fixed);
+
+	gtk_widget_set_size_request (root, width, height);
+
+	width -= 50;
+	height -= 50;
+
+	bubble = gtk_bubble_new();
+	gtk_widget_set_size_request(bubble, width, height);
+	gtk_fixed_put (GTK_FIXED (fixed), bubble, 25, 25);
+
+	fixed = gtk_fixed_new ();
+	gtk_container_add (GTK_CONTAINER (bubble), fixed);
 	
 	if (showclock) {
 		bubbleitem = gtk_clock_new ();
 		gtk_widget_set_size_request (bubbleitem, 150, 150);
-		gtk_fixed_put (GTK_FIXED (fixed), bubbleitem, width - 175, height - 175);
+		gtk_fixed_put (GTK_FIXED (fixed), bubbleitem, width - 150, height - 150);
 	}
 
 	if (showinfo) {
 		bubbleitem = cpu_init ();
 		gtk_widget_set_size_request (bubbleitem, 150, 150);
-		gtk_fixed_put (GTK_FIXED (fixed), bubbleitem, width - 350, height - 175);
+		gtk_fixed_put (GTK_FIXED (fixed), bubbleitem, 50, height - 150);
 
 		bubbleitem = mem_init ();
 		gtk_widget_set_size_request (bubbleitem, 150, 150);
-		gtk_fixed_put (GTK_FIXED (fixed), bubbleitem, width - 525, height - 175);
+		gtk_fixed_put (GTK_FIXED (fixed), bubbleitem, 250, height - 150);
 	}
 
 	if (showweather) {
-		bubble = gtk_bubble_new ();
 		bubbleitem = gtk_weather_new ();
-		gtk_container_add (GTK_CONTAINER (bubble), bubbleitem);
 		gtk_widget_set_size_request (GTK_WIDGET (bubbleitem), 64, -1);
 		gtk_widget_set_margin_top (bubbleitem, 50);
-		gtk_fixed_put (GTK_FIXED (fixed), bubble, width - 350, 25);
+		gtk_fixed_put (GTK_FIXED (fixed), bubbleitem, 635, 50);
 	}
 
 	if (tray) {
-		bubble = gtk_bubble_new ();
 		bubbleitem = gtk_tray_new ();
-		gtk_widget_set_size_request (GTK_WIDGET (bubbleitem), 64, -1);
-		gtk_widget_set_margin_left (bubbleitem, 50);
-		gtk_widget_set_margin_top (bubbleitem, 50);
-		gtk_container_add (GTK_CONTAINER (bubble), bubbleitem);
-		gtk_fixed_put (GTK_FIXED (fixed), bubble, width - 175, 25);
+		gtk_widget_set_size_request (GTK_WIDGET (bubbleitem), -1, 24);
+		gtk_fixed_put (GTK_FIXED (fixed), bubbleitem, width-150, 100);
 	}
 
 	if (!noplanner) {
-		bubble = gtk_bubble_new ();
 		bubbleitem = gtk_planner_new ();
 		gtk_widget_set_margin_left (bubbleitem, 50);
 		gtk_widget_set_margin_top (bubbleitem, 50);
-		gtk_container_add (GTK_CONTAINER (bubble), bubbleitem);
-		gtk_fixed_put (GTK_FIXED (fixed), bubble, 50, 25);
+		gtk_fixed_put (GTK_FIXED (fixed), bubbleitem, 0, 0);
 	}
 
 	if (launcher) {
-		bubble = gtk_bubble_new ();
 		bubbleitem = gtk_appfinder_new ();
-		gtk_widget_set_margin_left (bubbleitem, 75);
-		gtk_widget_set_margin_right (bubbleitem, 25);
-		gtk_widget_set_margin_top (bubbleitem, 50);
-		gtk_container_add (GTK_CONTAINER (bubble), bubbleitem);
-		gtk_fixed_put (GTK_FIXED (fixed), bubble, 50, height - 175);
+		gtk_fixed_put (GTK_FIXED (fixed), bubbleitem, width-700, 50);
 	}
 
 
@@ -114,8 +113,6 @@ main (int argc, char **argv)
 
 	gtk_window_set_type_hint (GTK_WINDOW (root),
 				GDK_WINDOW_TYPE_HINT_DESKTOP);
-
-	gtk_widget_set_size_request (root, width, height);
 
 	gtk_widget_show_all (root);
 

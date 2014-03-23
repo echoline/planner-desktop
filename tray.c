@@ -63,11 +63,11 @@ gtk_tray_handle_xevent (GdkXEvent *xevent, GdkEvent *event, gpointer user_data)
 
 			frame = gtk_frame_new(NULL);
 			gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_ETCHED_OUT);
-			gtk_widget_set_size_request (frame, 64, 64);
+			gtk_widget_set_size_request (frame, 24, 24);
 
 
 			socket = gtk_socket_new ();
-			gtk_widget_set_size_request (socket, 64, 64);
+			gtk_widget_set_size_request (socket, 24, 24);
 			gtk_widget_override_background_color (GTK_WIDGET (
 						socket), GTK_STATE_FLAG_NORMAL,
 						&bgcolor);
@@ -78,7 +78,7 @@ gtk_tray_handle_xevent (GdkXEvent *xevent, GdkEvent *event, gpointer user_data)
 			priv->rows++;
 
 			gtk_socket_add_id (GTK_SOCKET (socket), window);
-			gtk_widget_set_size_request (tray, 64, -1);
+			gtk_widget_set_size_request (tray, -1, 24);
 
 			gtk_widget_show_all (frame);
 

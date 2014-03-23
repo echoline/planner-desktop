@@ -151,9 +151,9 @@ gtk_planner_init (GtkPlanner *planner)
 	priv->calendar = gtk_calendar_new ();
 	gtk_calendar_set_detail_func(GTK_CALENDAR(priv->calendar), &details, NULL, NULL);
 	gtk_calendar_set_detail_width_chars(GTK_CALENDAR(priv->calendar), 3);
-	gtk_calendar_set_detail_height_rows(GTK_CALENDAR(priv->calendar), 3);
+	gtk_calendar_set_detail_height_rows(GTK_CALENDAR(priv->calendar), 1);
 	g_signal_connect(priv->calendar, "day-selected", (GCallback)on_calendar1_day_selected, planner);
-	gtk_widget_set_size_request(priv->calendar, 500, 420);
+	gtk_widget_set_size_request(priv->calendar, 320, 240);
 
 	gtk_grid_attach(GTK_GRID(planner), priv->calendar, 0, 0, 1, 10);
 

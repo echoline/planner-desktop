@@ -35,7 +35,7 @@ gtk_bubble_draw (GtkWidget *bubble, cairo_t *cr)
 	cairo_stroke (cr);
 
 	GTK_WIDGET_CLASS (gtk_bubble_parent_class)->draw (bubble, cr);
-
+/*
 	cairo_arc (cr, MAX (cx, width-75.0), MAX (cy, height-75.0), radius, 0, M_PI / 2.0);
 	cairo_arc (cr, MIN (cx, 75.0), MAX (cy, height-75.0), radius, M_PI / 2.0, M_PI);
 	cairo_arc (cr, MIN (cx, 75.0), MIN (cy, 75.0), radius, M_PI, 3.0 * M_PI / 2.0);
@@ -43,7 +43,7 @@ gtk_bubble_draw (GtkWidget *bubble, cairo_t *cr)
 
 	cairo_close_path (cr);
 
-/*	pat = cairo_pattern_create_radial (MAX (cx, width-75.0),
+	pat = cairo_pattern_create_radial (MAX (cx, width-75.0),
 					MAX (cy, height-75.0),
 					MAX (cx, cy), 0,  0,
 					MAX (cx, cy));
@@ -61,11 +61,11 @@ gtk_bubble_draw (GtkWidget *bubble, cairo_t *cr)
 static void
 gtk_bubble_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
 {
-	allocation->x -= 25;
-	allocation->y += 25;
+	/*allocation->x -= 25;
+	allocation->y -= 25;
 		
 	allocation->width += 50.0;
-	allocation->height += 50.0;
+	allocation->height += 50.0;*/
 
 	gtk_widget_set_allocation (widget, allocation);
 
