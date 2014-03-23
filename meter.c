@@ -34,41 +34,40 @@ gtk_meter_draw (GtkWidget *meter, cairo_t *cr)
 	gdouble cx = width / 2.0;
 	gdouble cy = height / 2.0;
 	gdouble radius = MIN (width/2, height/2) - 5;
-	gdouble ny = cy + radius/2;
+	gdouble ny = cy + radius * 0.9;
 	GtkMeterPrivate *priv = GTK_METER_GET_PRIVATE (meter);
 	gdouble low = priv->low;
 	gdouble high = priv->high;
 	gdouble value = priv->value;
-	gdouble theta = (((value - low) / (high - low)) - 0.5) * M_PI;
+	gdouble theta = (((value - low) / (high - low)) * 0.5 - 0.25) * M_PI;
 	cairo_text_extents_t extents;
 	gchar *name = priv->name;
 	gdouble inc;
 //	cairo_pattern_t *pat;
 
-	/*cairo_arc (cr, cx, cy, radius, 0, 2 * M_PI);
+	cairo_arc (cr, cx, cy, radius, 0, 2 * M_PI);
 
 	cairo_set_source_rgba (cr, 1, 1, 1, 0.5);
 	cairo_fill_preserve (cr);
 	cairo_set_source_rgb (cr, 0, 0, 0);
-	cairo_stroke (cr);*/
+	cairo_stroke (cr);
 
 	cairo_set_line_width (cr, 2.0 * cairo_get_line_width (cr));
 	cairo_set_line_cap (cr, CAIRO_LINE_CAP_ROUND);
 
-	for (inc = -0.5; inc <= 0.5; inc += 0.05)
+	for (inc = -0.25; inc <= 0.25; inc += 0.05)
 	{
-		cairo_move_to (cr, cx + radius * 0.8 * sin (inc * M_PI),
-				ny - radius * 0.8 * cos (inc * M_PI));
-		cairo_line_to (cr, cx + radius * 0.9 * sin (inc * M_PI),
-				ny - radius * 0.9 * cos (inc * M_PI));
+		cairo_move_to (cr, cx + radius * 1.2 * sin (inc * M_PI),
+				ny - radius * 1.2 * cos (inc * M_PI));
+		cairo_line_to (cr, cx + radius * 1.25 * sin (inc * M_PI),
+				ny - radius * 1.25 * cos (inc * M_PI));
 		cairo_stroke (cr);
 	}
 
-	cairo_set_line_width (cr, 0.5 * cairo_get_line_width (cr));
 	cairo_set_source_rgb (cr, 1, 0, 0);
 	cairo_move_to (cr, cx, ny);
-	cairo_line_to (cr, cx + radius * 0.7 * sin (theta),
-			ny - radius * 0.7 * cos (theta));
+	cairo_line_to (cr, cx + radius * sin (theta),
+			ny - radius * cos (theta));
 	cairo_stroke (cr);
 /*
 	pat = cairo_pattern_create_radial (cx, cy, radius,
@@ -81,24 +80,16 @@ gtk_meter_draw (GtkWidget *meter, cairo_t *cr)
 	cairo_pattern_destroy (pat); */
 
 	cairo_set_source_rgb (cr, 0, 0, 0);
-//	cairo_arc (cr, cx, cy, radius, 0.1 * M_PI, 0.9 * M_PI);
-	cairo_move_to (cr, 0, height-5);
-	cairo_line_to (cr, width-1, height-5);
+	cairo_arc (cr, cx, cy, radius, 0.1 * M_PI, 0.9 * M_PI);
 
-	/*cairo_curve_to (cr, cx, cy + radius/2,
+	cairo_curve_to (cr, cx, cy + radius/2,
 			cx - radius/2, cy + radius/4,
-			cx, cy + radius/4);*/
-	cairo_curve_to (cr, cx+radius/2, height-5,
-			cx+radius/4, cy + radius/4,
 			cx, cy + radius/4);
 
-/*	cairo_curve_to (cr, cx + radius/2, cy - radius/4,
-			cx - radius/2, cy + radius/2,
-			0, height-1);*/
-	cairo_curve_to (cr, cx-radius/4, cy + radius/4,
-			cx-radius/2, height-5,
-			0, height-5);
-			
+	cairo_curve_to (cr, cx + radius/2, cy + radius/4,
+			cx, cy + radius/2,
+			cx + radius * cos (0.1 * M_PI),
+			cy + radius * sin (0.1 * M_PI));
 
 	cairo_close_path (cr);
 
@@ -164,9 +155,9 @@ gtk_meter_set_value (GtkMeter *meter, gdouble value)
 {
 	GtkMeterPrivate *priv = GTK_METER_GET_PRIVATE (meter);
 
-	if (priv->low > value)
+	if (priv->low >= value)
 		priv->value = priv->low;
-	else if (priv->high < value)
+	else if (priv->high <= value)
 		priv->value = priv->high;
 	else
 		priv->value = value;

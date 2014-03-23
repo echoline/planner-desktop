@@ -62,10 +62,10 @@ static void
 gtk_bubble_size_allocate (GtkWidget *widget, GtkAllocation *allocation)
 {
 	/*allocation->x -= 25;
-	allocation->y -= 25;
+	allocation->y -= 25;*/
 		
 	allocation->width += 50.0;
-	allocation->height += 50.0;*/
+	allocation->height += 50.0;
 
 	gtk_widget_set_allocation (widget, allocation);
 
