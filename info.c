@@ -58,7 +58,7 @@ mem_meter_update (gpointer data)
 					while (g_ascii_isspace (*tmp))
 						tmp++;
 					gtk_meter_set_value (GTK_METER (meter), 
-						g_ascii_strtod (tmp, NULL));
+						gtk_meter_get_high (GTK_METER (meter)) - g_ascii_strtod (tmp, NULL));
 				}
 				break;
 			}

@@ -8,11 +8,11 @@ struct _GtkWeatherPrivate
 {
 	GWeatherInfo *info;
 	GtkWidget *place;
-	GtkWidget *sunrise;
 	GtkWidget *icon;
-	GtkWidget *sunset;
 	GtkWidget *temp;
 	GtkWidget *wind;
+	GtkWidget *sunrise;
+	GtkWidget *sunset;
 };
 
 #define GTK_WEATHER_GET_PRIVATE(obj)	(G_TYPE_INSTANCE_GET_PRIVATE ((obj), GTK_TYPE_WEATHER, GtkWeatherPrivate))
@@ -53,37 +53,21 @@ gtk_weather_updated (gpointer data, gpointer user_data)
 	GWeatherInfo *info = GWEATHER_INFO (data);
 	GtkWeather *weather = GTK_WEATHER (user_data);
 	GtkWeatherPrivate *priv = GTK_WEATHER_GET_PRIVATE (weather);
-	GdkRGBA color;
-
-	gdk_rgba_parse (&color, "black");
-
-	//calc_sun (info);
-	//calc_moon (info);
 
 	const gchar *icon_name = gweather_info_get_icon_name (info);
 
 	gtk_label_set_text (GTK_LABEL (priv->place),
 				gweather_info_get_location_name (info));
-	gtk_widget_override_color (priv->place, GTK_STATE_FLAG_NORMAL,
-				&color);
 	gtk_label_set_text (GTK_LABEL (priv->temp),
 				gweather_info_get_temp (info));
-	gtk_widget_override_color (priv->temp, GTK_STATE_FLAG_NORMAL,
-				&color);
-	gtk_label_set_text (GTK_LABEL (priv->sunrise),
-				gweather_info_get_sunrise (info));
-	gtk_widget_override_color (priv->sunrise, GTK_STATE_FLAG_NORMAL,
-				&color);
 	gtk_image_set_from_icon_name (GTK_IMAGE (priv->icon), icon_name,
 					 GTK_ICON_SIZE_DIALOG);
-	gtk_label_set_text (GTK_LABEL (priv->sunset),
-				gweather_info_get_sunset (info));
-	gtk_widget_override_color (priv->sunset, GTK_STATE_FLAG_NORMAL,
-				&color);
 	gtk_label_set_text (GTK_LABEL (priv->wind),
 				gweather_info_get_wind (info));
-	gtk_widget_override_color (priv->wind, GTK_STATE_FLAG_NORMAL,
-				&color);
+	gtk_label_set_text (GTK_LABEL (priv->sunrise),
+				gweather_info_get_sunrise (info));
+	gtk_label_set_text (GTK_LABEL (priv->sunset),
+				gweather_info_get_sunset (info));
 }
 
 static void
@@ -117,20 +101,26 @@ gtk_weather_new (void)
 {
 	GtkWidget *ret = g_object_new (GTK_TYPE_WEATHER, NULL);
 	GtkWeatherPrivate *priv = GTK_WEATHER_GET_PRIVATE (GTK_WEATHER (ret));
+	GdkRGBA color = { 0, 0, 0, 0 };
 
 	priv->place = gtk_label_new ("");
-	priv->sunrise = gtk_label_new ("");
+	gtk_widget_override_background_color (priv->place, 0, &color);
 	priv->icon = gtk_image_new ();
-	priv->sunset = gtk_label_new ("");
 	priv->temp = gtk_label_new ("");
 	priv->wind = gtk_label_new ("");
+	priv->sunrise = gtk_label_new ("");
+	priv->sunset = gtk_label_new ("");
 
-	gtk_grid_attach (GTK_GRID (ret), priv->place, 0, 0, 3, 1);
-	gtk_grid_attach (GTK_GRID (ret), priv->sunrise, 0, 1, 1, 1);
-	gtk_grid_attach (GTK_GRID (ret), priv->icon, 1, 1, 1, 1);
-	gtk_grid_attach (GTK_GRID (ret), priv->sunset, 2, 1, 1, 1);
-	gtk_grid_attach (GTK_GRID (ret), priv->temp, 0, 2, 3, 1);
-	gtk_grid_attach (GTK_GRID (ret), priv->wind, 0, 3, 3, 1);
+	gtk_grid_attach (GTK_GRID (ret), priv->place, 0, 0, 2, 1);
+	gtk_grid_attach (GTK_GRID (ret), priv->icon, 0, 1, 2, 1);
+	gtk_grid_attach (GTK_GRID (ret), priv->temp, 0, 2, 2, 1);
+	gtk_grid_attach (GTK_GRID (ret), priv->wind, 0, 3, 2, 1);
+	gtk_grid_attach (GTK_GRID (ret), gtk_label_new ("Sunrise: "),
+							0, 4, 1, 1);
+	gtk_grid_attach (GTK_GRID (ret), priv->sunrise, 1, 4, 1, 1);
+	gtk_grid_attach (GTK_GRID (ret), gtk_label_new ("Sunset: "),
+							0, 5, 1, 1);
+	gtk_grid_attach (GTK_GRID (ret), priv->sunset, 1, 5, 1, 1);
 
 	return ret;
 }
