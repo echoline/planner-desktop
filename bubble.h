@@ -9,14 +9,14 @@ typedef struct _GtkBubbleClass		GtkBubbleClass;
 
 struct _GtkBubble
 {
-	GtkBin parent;
+	GtkEventBox parent;
 
 	/* private */
 };
 
 struct _GtkBubbleClass
 {
-	GtkBinClass parent_class;
+	GtkEventBoxClass parent_class;
 };
 
 #define GTK_TYPE_BUBBLE		(gtk_bubble_get_type ())

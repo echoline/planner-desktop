@@ -28,6 +28,14 @@ static GOptionEntry entries[] =
 	{ NULL }
 };
 
+static gboolean
+on_delete_event (GtkWidget *widget,
+		GdkEvent  *event,
+		gpointer   data)
+{
+	return TRUE;
+}
+
 int
 main (int argc, char **argv)
 {
@@ -53,6 +61,11 @@ main (int argc, char **argv)
 	gtk_window_set_type_hint (GTK_WINDOW (root),
 				GDK_WINDOW_TYPE_HINT_DESKTOP);
 	gtk_widget_set_size_request (root, width, height);
+
+	gtk_window_set_skip_pager_hint (GTK_WINDOW (root), TRUE);
+
+	g_signal_connect (root, "delete-event",
+			G_CALLBACK (on_delete_event), NULL);
 
 	g_signal_connect (root, "destroy",
 			G_CALLBACK (gtk_main_quit), NULL);

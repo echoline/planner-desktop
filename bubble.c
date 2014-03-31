@@ -9,7 +9,7 @@ struct _GtkBubblePrivate
 
 #define GTK_BUBBLE_GET_PRIVATE(obj)	(G_TYPE_INSTANCE_GET_PRIVATE ((obj), GTK_TYPE_BUBBLE, GtkBubblePrivate))
 
-G_DEFINE_TYPE (GtkBubble, gtk_bubble, GTK_TYPE_BIN);
+G_DEFINE_TYPE (GtkBubble, gtk_bubble, GTK_TYPE_EVENT_BOX);
 
 
 static gboolean
@@ -20,7 +20,7 @@ gtk_bubble_draw (GtkWidget *bubble, cairo_t *cr)
 	gdouble cx = width / 2.0;
 	gdouble cy = height / 2.0;
 	gdouble radius = MIN (75.0, MIN (cx, cy)) - 5;
-	//cairo_pattern_t *pat;
+	cairo_pattern_t *pat;
 
 	cairo_arc (cr, MAX (cx, width-75.0), MAX (cy, height-75.0), radius, 0, M_PI / 2.0);
 	cairo_arc (cr, MIN (cx, 75.0), MAX (cy, height-75.0), radius, M_PI / 2.0, M_PI);
@@ -35,7 +35,7 @@ gtk_bubble_draw (GtkWidget *bubble, cairo_t *cr)
 	cairo_stroke (cr);
 
 	GTK_WIDGET_CLASS (gtk_bubble_parent_class)->draw (bubble, cr);
-/*
+
 	cairo_arc (cr, MAX (cx, width-75.0), MAX (cy, height-75.0), radius, 0, M_PI / 2.0);
 	cairo_arc (cr, MIN (cx, 75.0), MAX (cy, height-75.0), radius, M_PI / 2.0, M_PI);
 	cairo_arc (cr, MIN (cx, 75.0), MIN (cy, 75.0), radius, M_PI, 3.0 * M_PI / 2.0);
@@ -43,17 +43,14 @@ gtk_bubble_draw (GtkWidget *bubble, cairo_t *cr)
 
 	cairo_close_path (cr);
 
-	pat = cairo_pattern_create_radial (MAX (cx, width-75.0),
-					MAX (cy, height-75.0),
-					MAX (cx, cy), 0,  0,
-					MAX (cx, cy));
+	pat = cairo_pattern_create_linear (0, height-150.0, 0, height);
 
-	cairo_pattern_add_color_stop_rgba (pat, 0, 0, 0, 0, 0.4);
-	cairo_pattern_add_color_stop_rgba (pat, 1, 1, 1, 1, 0.2);
+	cairo_pattern_add_color_stop_rgba (pat, 0, 1, 1, 1, 0.0);
+	cairo_pattern_add_color_stop_rgba (pat, 1, 0, 0, 0, 0.4);
 	cairo_set_source (cr, pat);
 	cairo_fill (cr);
 
-	cairo_pattern_destroy (pat); */
+	cairo_pattern_destroy (pat); 
 
 	return FALSE;
 }

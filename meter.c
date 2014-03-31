@@ -43,7 +43,7 @@ gtk_meter_draw (GtkWidget *meter, cairo_t *cr)
 	cairo_text_extents_t extents;
 	gchar *name = priv->name;
 	gdouble inc;
-//	cairo_pattern_t *pat;
+	cairo_pattern_t *pat;
 
 	cairo_arc (cr, cx, cy, radius, 0, 2 * M_PI);
 
@@ -69,15 +69,15 @@ gtk_meter_draw (GtkWidget *meter, cairo_t *cr)
 	cairo_line_to (cr, cx + radius * sin (theta),
 			ny - radius * cos (theta));
 	cairo_stroke (cr);
-/*
-	pat = cairo_pattern_create_radial (cx, cy, radius,
-                                   0,  0, radius);
+
+	pat = cairo_pattern_create_radial (cx, cy+radius/4, radius,
+                                   cx,  0, radius);
 	cairo_pattern_add_color_stop_rgba (pat, 0, 0, 0, 0, 0.4);
-	cairo_pattern_add_color_stop_rgba (pat, 1, 1, 1, 1, 0.2);
+	cairo_pattern_add_color_stop_rgba (pat, 1, 1, 1, 1, 0.0);
 	cairo_set_source (cr, pat);
 	cairo_arc (cr, cx, cy, radius, 0, 2 * M_PI);
 	cairo_fill (cr);
-	cairo_pattern_destroy (pat); */
+	cairo_pattern_destroy (pat); 
 
 	cairo_set_source_rgb (cr, 0, 0, 0);
 	cairo_arc (cr, cx, cy, radius, 0.1 * M_PI, 0.9 * M_PI);
