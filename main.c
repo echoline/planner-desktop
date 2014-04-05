@@ -6,14 +6,12 @@
 #include "background.h"
 #include "planner.h"
 #include "info.h"
-#include "weather.h"
 
 static gchar *background_name = NULL;
 static gboolean tray = FALSE;
 static gboolean launcher = FALSE;
 static gboolean noplanner = FALSE;
 static gboolean showclock = FALSE;
-static gboolean showweather = FALSE;
 static gboolean showinfo = FALSE;
 
 static GOptionEntry entries[] =
@@ -23,7 +21,6 @@ static GOptionEntry entries[] =
 	{ "launcher",'l', 0, G_OPTION_ARG_NONE, &launcher, "System launcher input box", NULL},
 	{ "no-planner",'n', 0, G_OPTION_ARG_NONE, &noplanner, "Do not display planner", NULL},
 	{ "clock",'c', 0, G_OPTION_ARG_NONE, &showclock, "Display clock", NULL},
-	{ "weather",'w', 0, G_OPTION_ARG_NONE, &showweather, "Display weather", NULL},
 	{ "info", 'i', 0, G_OPTION_ARG_NONE, &showinfo, "Display system load info", NULL},
 	{ NULL }
 };
@@ -87,16 +84,6 @@ main (int argc, char **argv)
 		bubbleitem = mem_init ();
 		gtk_widget_set_size_request (bubbleitem, 150, 150);
 		gtk_fixed_put (GTK_FIXED (fixed), bubbleitem, width - 525, height - 175);
-	}
-
-	if (showweather) {
-		bubble = gtk_bubble_new ();
-		bubbleitem = gtk_weather_new ();
-		gtk_container_add (GTK_CONTAINER (bubble), bubbleitem);
-		gtk_widget_set_size_request (GTK_WIDGET (bubbleitem), 64, -1);
-		gtk_widget_set_margin_top (bubbleitem, 50);
-		gtk_widget_set_margin_left (bubbleitem, 50);
-		gtk_fixed_put (GTK_FIXED (fixed), bubble, 800, 25);
 	}
 
 	if (tray) {
